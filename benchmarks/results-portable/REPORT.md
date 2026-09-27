@@ -1,0 +1,72 @@
+# Local benchmark results
+
+Run: 2026-09-27T17:32:19.142994+00:00
+
+All numbers below are independent medians of repeated trials. CPU: 100% = one core. RSS includes the full server process tree, including Python and Gunicorn master/workers.
+
+## c1
+
+| Server | req/s | p50 ms | p95 ms | p99 ms | CPU % | CPU µs/req | Mean RSS MiB | Peak RSS MiB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| rustic-server | 21,628.101 | 0.041 | 0.070 | 0.098 | 26.511 | 12.674 | 16.453 | 16.453 |
+| flask | 1,966.708 | 0.485 | 0.636 | 0.738 | 97.240 | 518.028 | 62.859 | 62.859 |
+| django | 1,954.884 | 0.495 | 0.632 | 0.728 | 98.018 | 522.833 | 68.047 | 68.047 |
+
+## c32
+
+| Server | req/s | p50 ms | p95 ms | p99 ms | CPU % | CPU µs/req | Mean RSS MiB | Peak RSS MiB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| rustic-server | 117,728.948 | 0.296 | 0.359 | 0.396 | 93.464 | 8.414 | 17.872 | 17.875 |
+| flask | 1,956.278 | 16.052 | 19.260 | 21.884 | 102.649 | 546.649 | 63.356 | 63.359 |
+| django | 1,893.672 | 16.554 | 19.917 | 22.646 | 103.774 | 568.357 | 68.494 | 68.516 |
+
+## rate500
+
+| Server | req/s | p50 ms | p95 ms | p99 ms | CPU % | CPU µs/req | Mean RSS MiB | Peak RSS MiB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| rustic-server | 499.852 | 0.149 | 0.509 | 1.825 | 2.482 | 51.445 | 17.315 | 17.625 |
+| flask | 499.920 | 0.541 | 2.091 | 4.330 | 38.194 | 800.256 | 63.016 | 63.031 |
+| django | 500.023 | 0.527 | 1.826 | 3.172 | 37.817 | 789.701 | 68.295 | 68.312 |
+
+## Environment and method
+
+```json
+{
+  "started_utc": "2026-09-27T17:32:19.142994+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "physical_cpus": 10,
+  "logical_cpus": 10,
+  "ram_gib": 32.0,
+  "packages": {
+    "rustic-server": "0.1.0",
+    "flask": "3.1.3",
+    "django": "5.2.17",
+    "gunicorn": "23.0.0",
+    "psutil": "7.2.2"
+  },
+  "oha": "oha 1.16.0",
+  "duration_seconds": 5,
+  "warmup_seconds": 2,
+  "trials": 3,
+  "configuration": "Rust: 1 Tokio worker; Flask/Django: Gunicorn gthread, 1 worker, 4 threads; oha: 2 Tokio threads. HTTP/1.1 keep-alive over loopback. 14-byte pre-encoded JSON on all servers.",
+  "source_sha256": {
+    "benchmarks/run.py": "27034020f5da762d5dbf728bb8640fdcda1d1dec161aaaa42fb120bd422f6e62",
+    "benchmarks/rustic_app.py": "655c3cc7e9d782eefcadb2cb05c100b5c1b14673cf24fdc8d99739f7a80eaeeb",
+    "benchmarks/django_app.py": "fc378c5d0acdda272a57287fd67c956129bc000f3dcb30c18c259a0a91d3a902",
+    "benchmarks/flask_app.py": "eb20abf2e1d2ebdf67becd281497190a8504524c12f77fd4aa560b5cfe500ed9",
+    "benchmarks/pyproject.toml": "85d3d80435656b8c77bf0e35056a06c0ceea1f9ba9166f9b98f9d51aaf41c8ea",
+    "benchmarks/uv.lock": "ce6810833c9eba27330b728a9049f95ba8bc1f361b83ad0ffac65faf481bd9eb",
+    "src/lib.rs": "3abc16653a134e11e8310291432c8ab97119c8a4c38049ed38d3a8f90b597b9a",
+    "python/rustic_server/__init__.py": "8b61315bdbf65fa351c940a70ed7eecc2cd19636f8a3fa7011d1fe6dc462d8fb",
+    "Cargo.lock": "96d196f15128ec7b2276b8c47b59e55a565b48f56baa8c8385e570f4a7eee183"
+  }
+}
+```
+
+See [README](../README.md) for setup, constraints, and interpretation. Raw per-trial metrics and oha responses accompany this report.
+
+All recorded trials returned only HTTP 200 with no reported transport errors. Endpoint correctness was checked before each trial.
+
+These are local static-response measurements, not a general framework ranking. Flask and Django use pre-encoded bytes too. Saturation CPU percentages represent different achieved throughputs; use rate500 for equal-load comparisons. RSS sums may count shared pages more than once. Client and server compete for the same host; short runs, scheduling, thermal state, and other applications can affect results. Latencies at saturation use a closed-loop client and do not correct coordinated omission.

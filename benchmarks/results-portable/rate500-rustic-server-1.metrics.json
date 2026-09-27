@@ -1,0 +1,44 @@
+{
+  "app": "rustic-server",
+  "scenario": "rate500",
+  "trial": 1,
+  "connections": 32,
+  "target_rps": 500,
+  "requests": 2501,
+  "rps": 499.8519239140263,
+  "p50_ms": 0.14766700000000002,
+  "p95_ms": 0.450916,
+  "p99_ms": 1.628584,
+  "cpu_percent": 2.5353384286195437,
+  "cpu_us_per_request": 52.53631827269091,
+  "idle_rss_mib": 17.203125,
+  "mean_rss_mib": 17.2675,
+  "peak_rss_mib": 17.578125,
+  "cpu_seconds": 0.13139333199999997,
+  "measurement_seconds": 5.18247704199166,
+  "statuses": {
+    "200": 2501
+  },
+  "errors": {},
+  "server_command": [
+    "python",
+    "benchmarks/rustic_app.py",
+    "64403"
+  ],
+  "load_command": [
+    "benchmarks/.tools/bin/oha",
+    "--no-tui",
+    "--output-format",
+    "json",
+    "-w",
+    "-t",
+    "3s",
+    "-c",
+    "32",
+    "-q",
+    "500",
+    "-z",
+    "5s",
+    "http://127.0.0.1:64403/health"
+  ]
+}
